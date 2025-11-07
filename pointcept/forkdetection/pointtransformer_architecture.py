@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/arun/PointClouds/Pointcept')
+sys.path.append('/home/admin_2qdjwp3/Arun/PointTransformerV3')
 
 
 from pointcept.models.point_transformer_v3.point_transformer_v3m1_base import *
@@ -38,8 +38,10 @@ class PointTransformerV3(PointModule):
         pdnorm_adaptive=False,
         pdnorm_affine=True,
         pdnorm_conditions=("ScanNet", "S3DIS", "Structured3D"),
+        num_classes=2
     ):
         super().__init__()
+
         self.num_stages = len(enc_depths)
         self.order = [order] if isinstance(order, str) else order
         self.cls_mode = cls_mode
@@ -185,6 +187,8 @@ class PointTransformerV3(PointModule):
                     )
                 self.dec.add(module=dec, name=f"dec{s}")
 
+        self.segmentation = nn.Linear(dec_channels[0], num_classes)
+
     def forward(self, data_dict):
         point = Point(data_dict)
         point.serialization(order=self.order, shuffle_orders=self.shuffle_orders)
@@ -200,4 +204,6 @@ class PointTransformerV3(PointModule):
         #         indptr=nn.functional.pad(point.offset, (1, 0)),
         #         reduce="mean",
         #     )
+
+        point["logits"] = self.segmentation(point.feat)
         return point
