@@ -13,7 +13,7 @@ import torch.distributed as dist
 
 
 # Training parameters
-BATCH_SIZE = 1
+BATCH_SIZE = 4
 NUM_EPOCHS = 50
 LEARNING_RATE = 0.0001
 MODEL_SAVE_PATH = "/home/admin_2qdjwp3/Arun/PointTransformerV3/checkpoints"
